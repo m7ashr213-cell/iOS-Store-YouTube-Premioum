@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS Store - YouTube Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF0000;
+            --secondary-color: #FF3333;
+            --accent-color: #FF6666;
+            --background-color: #121212;
+            --text-color: #F5F5F7;
+            --card-color: #1E1E1E;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --gradient: linear-gradient(135deg, #CC0000, #FF0000, #FF3333);
+            --gradient-light: linear-gradient(135deg, rgba(204, 0, 0, 0.1), rgba(255, 0, 0, 0.1), rgba(255, 51, 51, 0.1));
+        }
+
+        .light-mode {
+            --primary-color: #CC0000;
+            --secondary-color: #FF0000;
+            --accent-color: #FF3333;
+            --background-color: #F5F5F7;
+            --text-color: #1D1D1F;
+            --card-color: #FFFFFF;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #CC0000, #FF0000, #FF3333);
+            --gradient-light: linear-gradient(135deg, rgba(204, 0, 0, 0.1), rgba(255, 0, 0, 0.1), rgba(255, 51, 51, 0.1));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: rgba(30, 30, 30, 0.8);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--card-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-icon:hover::before {
+            opacity: 1;
+        }
+
+        .theme-toggle {
+            background: var(--card-color);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: var(--text-color);
+            font-size: 22px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+            background: var(--gradient);
+            color: white;
+        }
+
+        .hero {
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--gradient-light);
+            z-index: -1;
+        }
+
+        .app-image-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 50px;
+            perspective: 1200px;
+            cursor: pointer;
+        }
+
+        .app-image {
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.pinimg.com/originals/2e/3a/02/2e3a022608bedcdd4e556cc8a4cb2ff8.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #0f0f0f;
+            border-radius: 35px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 0 50px rgba(255, 0, 0, 0.5);
+            transform-style: preserve-3d;
+            animation: float 8s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        .app-image::after {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 5s infinite;
+            z-index: 2;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotateX(5deg) rotateY(5deg) scale(1); 
+            }
+            25% { 
+                transform: translateY(-20px) rotateX(-5deg) rotateY(10deg) scale(1.02); 
+            }
+            50% { 
+                transform: translateY(-10px) rotateX(10deg) rotateY(-5deg) scale(1.01); 
+            }
+            75% { 
+                transform: translateY(-15px) rotateX(-10deg) rotateY(-10deg) scale(1.02); 
+            }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 22px;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .details-btn {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 18px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 20px;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: none;
+        }
+
+        .details-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .details-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 0, 0, 0.6);
+        }
+
+        .details-btn:hover::before {
+            left: 100%;
+        }
+
+        .features {
+            padding: 100px 0;
+            background-color: var(--card-color);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 60px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card {
+            background-color: var(--background-color);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 25px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card h3 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            font-size: 18px;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        .about {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content h2 {
+            font-size: 42px;
+            margin-bottom: 40px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .about-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .about-content p {
+            font-size: 20px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        .developer {
+            margin-top: 50px;
+            padding: 30px;
+            background-color: var(--card-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .developer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .developer h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .developer p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        footer {
+            background-color: var(--card-color);
+            padding: 50px 0 30px;
+            text-align: center;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-link {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 16px;
+            position: relative;
+        }
+
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-link:hover::after {
+            width: 100%;
+        }
+
+        .copyright {
+            font-size: 16px;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-top: 20px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transform: scale(0.9);
+            animation: scaleUp 0.3s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes scaleUp {
+            to { transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .app-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .info-value {
+            font-weight: 500;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .download-btn {
+            width: 100%;
+            height: 45px;
+            background: var(--gradient);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .important-note {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .important-note::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-light);
+            z-index: -1;
+        }
+
+        .important-note h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .important-note p {
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .telegram-channel {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .telegram-channel a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Welcome Message Styles */
+        .welcome-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .welcome-content {
+            background-color: var(--card-color);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transform: scale(0.9);
+            animation: scaleUp 0.3s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .welcome-header {
+            padding: 20px;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .welcome-header h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .close-welcome {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            color: white;
+        }
+
+        .close-welcome:hover {
+            transform: rotate(90deg);
+        }
+
+        .welcome-body {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .welcome-body p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--gradient-light);
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-link:hover {
+            background: var(--gradient);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .contact-label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 38px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .app-image-container {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .section-title {
+                font-size: 34px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .modal-content, .welcome-content {
+                width: 95%;
+            }
+            
+            .contact-links {
+                gap: 10px;
+            }
+            
+            .download-btn {
+                height: 50px;
+                font-size: 15px;
+            }
+        }
+
+        /* تحسينات إضافية */
+        .app-image.loading {
+            background: var(--gradient-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-image.loading::after {
+            content: 'Loading...';
+            color: white;
+            font-size: 18px;
+            z-index: 3;
+        }
+
+        .details-btn:focus,
+        .social-icon:focus,
+        .theme-toggle:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* تحسينات للأداء */
+        .feature-card,
+        .app-image,
+        .social-icon {
+            will-change: transform;
+        }
+
+        /* إصلاح مشكلة التمرير */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <div class="logo-icon">iOS</div>
+                    <div class="logo-text">iOS Store</div>
+                </a>
+                <div class="social-icons">
+                    <a href="https://wa.me/201019569018" class="social-icon" target="_blank" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.instagram.com/mhamedashrf.0" class="social-icon" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://t.me/h_moh_za" class="social-icon" target="_blank" aria-label="Telegram">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+                    <i class="fas fa-sun"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="app-image-container" id="appImageContainer">
+                <div class="app-image" id="appImage"></div>
+            </div>
+            <h1>YouTube Premium</h1>
+            <p>A premium YouTube application specially designed for iOS users, offering a unique experience with advanced features and enhanced security.</p>
+            <button class="details-btn" id="detailsBtn">App Details</button>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">App Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Advanced Security</h3>
+                    <p>Double encryption to protect your account and personal data from any threats.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Fast Performance</h3>
+                    <p>Optimized design ensures super fast loading and responsiveness for video streaming.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Full Customization</h3>
+                    <p>Choose from dozens of themes and colors to customize your YouTube experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <h2>About iOS Store</h2>
+                <p>iOS Store is a leading platform for providing the best applications for iOS users. We focus on delivering a unique user experience with high-quality and secure applications.</p>
+                <p>We are constantly working to develop and improve our platform to meet the needs of our users.</p>
+                
+                <div class="developer">
+                    <h3>Developer: Mohamed Ashraf</h3>
+                    <p>Professional application developer with extensive experience in creating innovative solutions for iOS users.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Use</a>
+                <a href="#" class="footer-link">Contact Us</a>
+            </div>
+            <p class="copyright">© 2025 iOS Store by iosmodx. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for App Details -->
+    <div class="modal" id="appDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>YouTube Premium Details</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="app-info">
+                    <div class="info-item">
+                        <span class="info-label">App Name:</span>
+                        <span class="info-value">YouTube Premium</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Version:</span>
+                        <span class="info-value">18.42.3</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Size:</span>
+                        <span class="info-value">50 MB</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Bundle ID:</span>
+                        <span class="info-value">com.youtube</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Compatibility:</span>
+                        <span class="info-value">iOS 12.0 or later</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Last Updated:</span>
+                        <span class="info-value">October 15, 2025</span>
+                    </div>
+                </div>
+                
+                <!-- Download Buttons -->
+                <div class="download-buttons">
+                    <!-- The First App - Put your link here -->
+                    <a href="https://mega.nz/file/vwJQBC7I#6GTdqNByHHGLhO2w8UBdzI1wT80S2o1b2H8zQUfJnd0" class="download-btn" target="_blank">
+                        <i class="fas fa-download"></i>
+                        Download The First App
+                    </a>
+                    
+                    <!-- The Second App - Put your link here -->
+                    <a href="https://mega.nz/file/ao4X2IZT#WkJRSXy23Tiy41QGDBz1OwlZWzC6xo2x2d8tzL7TH_A" class="download-btn" target="_blank">
+                        <i class="fas fa-download"></i>
+                        Download The Second App
+                    </a>
+                </div>
+                
+                <!-- Important Note -->
+                <div class="important-note">
+                    <h4>Important Note:</h4>
+                    <p>You must download The First App for The Second App to work properly</p>
+                </div>
+                
+                <p class="telegram-channel">Join to our Telegram channel: <a href="https://t.me/ios_store_updates" target="_blank">@ios_store_updates</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Message Modal -->
+    <div class="welcome-modal" id="welcomeModal">
+        <div class="welcome-content">
+            <div class="welcome-header">
+                <h2>Welcome to iOS Store!</h2>
+                <button class="close-welcome" id="closeWelcome">&times;</button>
+            </div>
+            <div class="welcome-body">
+                <p>We're delighted to welcome you to our iOS Store! Thank you for visiting our website.</p>
+                <p>We're here to provide you with the best iOS applications and support. Feel free to contact our developer through any of the following channels:</p>
+                
+                <div class="contact-links">
+                    <div class="contact-label">Chat with the developer:</div>
+                    <a href="https://wa.me/201019569018" class="contact-link" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a href="https://www.instagram.com/mhamedashrf.0" class="contact-link" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://t.me/h_moh_za" class="contact-link" target="_blank">
+                        <i class="fab fa-telegram"></i>
+                        <span>Telegram</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark/Light mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Load saved preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        } else {
+            document.body.classList.remove('light-mode');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            
+            if (document.body.classList.contains('light-mode')) {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Improve image loading
+        const appImage = document.getElementById('appImage');
+        appImage.classList.add('loading');
+        
+        // Use the new image
+        setTimeout(() => {
+            appImage.style.backgroundImage = "url('https://i.pinimg.com/originals/2e/3a/02/2e3a022608bedcdd4e556cc8a4cb2ff8.jpg')";
+            appImage.classList.remove('loading');
+        }, 500);
+
+        // Manage popup windows
+        const appImageContainer = document.getElementById('appImageContainer');
+        const welcomeModal = document.getElementById('welcomeModal');
+        const closeWelcome = document.getElementById('closeWelcome');
+        const detailsBtn = document.getElementById('detailsBtn');
+        const appDetailsModal = document.getElementById('appDetailsModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // Functions to open and close modals
+        function openModal(modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalFunc(modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Click events
+        appImageContainer.addEventListener('click', () => openModal(welcomeModal));
+        detailsBtn.addEventListener('click', () => openModal(appDetailsModal));
+        closeWelcome.addEventListener('click', () => closeModalFunc(welcomeModal));
+        closeModal.addEventListener('click', () => closeModalFunc(appDetailsModal));
+
+        // Close when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === welcomeModal) closeModalFunc(welcomeModal);
+            if (e.target === appDetailsModal) closeModalFunc(appDetailsModal);
+        });
+
+        // Close with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModalFunc(welcomeModal);
+                closeModalFunc(appDetailsModal);
+            }
+        });
+
+        // Open welcome modal automatically after loading
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (!localStorage.getItem('welcomeShown')) {
+                    openModal(welcomeModal);
+                    localStorage.setItem('welcomeShown', 'true');
+                }
+            }, 1500);
+        });
+
+        // Performance improvements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Improve smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
